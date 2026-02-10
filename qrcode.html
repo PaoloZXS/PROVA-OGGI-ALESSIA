@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#333333">
+        <script>
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('service-worker.js');
+            });
+          }
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scarica la PWA</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f5f5f5; text-align: center; padding: 2rem; }
+      nav {
+        background-color: #333;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 0 2rem;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+      nav a:hover {
+        color: #4CAF50;
+      }
+      .qrcode-container { background: #fff; display: inline-block; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+      h1 { color: #333; margin-bottom: 1rem; }
+      p { color: #555; margin-bottom: 2rem; }
+      #qrcode { margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="test.html">Test</a></li>
+        <li><a href="calendario.html">Calendario</a></li>
+        <li><a href="qrcode.html">QR Code</a></li>
+      </ul>
+    </nav>
+    <div class="qrcode-container">
+        <h1>Scarica la nostra App!</h1>
+        <p>Scansiona il QR code qui sotto con il tuo smartphone per aprire la PWA e installarla.</p>
+        <canvas id="qrcode"></canvas>
+        <p style="margin-top:1.5rem; color:#888; font-size:0.95em;">Se richiesto, aggiungi la pagina alla schermata Home per installare la PWA.</p>
+    </div>
+    <script>
+      // Genera il QR code come immagine usando un servizio online
+      const pwaUrl = window.location.origin + '/index.html';
+      const qrImg = document.createElement('img');
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(pwaUrl)}&size=220x220`;
+      qrImg.alt = 'QR Code';
+      const canvas = document.getElementById('qrcode');
+      canvas.replaceWith(qrImg);
+    </script>
+</body>
+</html>

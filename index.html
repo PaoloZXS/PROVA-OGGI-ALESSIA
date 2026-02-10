@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home</title>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#333333">
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('service-worker.js');
+                });
+            }
+        </script>
     <style>
         * {
             margin: 0;
@@ -122,21 +131,183 @@
         <p>Questa è una pagina di prova con menu in alto.</p>
         
         <div class="login-container">
-            <h2>Login</h2>
-            <form>
+            <h2>Registrazione</h2>
+            <form id="regForm">
                 <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="cognome">Cognome:</label>
+                    <input type="text" id="cognome" name="cognome" required>
                 </div>
-                
-                <button type="submit" class="btn-login">Accedi</button>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <button type="submit" class="btn-login">Registrati</button>
             </form>
+            <div id="msg" style="margin-top:1rem;color:green;"></div>
         </div>
+        <div style="max-width:600px;margin:2rem auto;">
+            <h2>Elenco Utenti Registrati</h2>
+            <table id="tabellaUtenti" style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#eee;">
+                        <th style="border:1px solid #ccc;padding:8px;">ID</th>
+                        <th style="border:1px solid #ccc;padding:8px;">Nome</th>
+                        <th style="border:1px solid #ccc;padding:8px;">Cognome</th>
+                        <th style="border:1px solid #ccc;padding:8px;">Email</th>
+                        <th style="border:1px solid #ccc;padding:8px;">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <script>
+        async function caricaUtenti() {
+            const res = await fetch('/api/utenti');
+            const utenti = await res.json();
+            const tbody = document.querySelector('#tabellaUtenti tbody');
+            tbody.innerHTML = '';
+            utenti.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                  <td style='border:1px solid #ccc;padding:8px;'>${u.id}</td>
+                  <td style='border:1px solid #ccc;padding:8px;'>${u.nome}</td>
+                  <td style='border:1px solid #ccc;padding:8px;'>${u.cognome}</td>
+                  <td style='border:1px solid #ccc;padding:8px;'>${u.email}</td>
+                  <td style='border:1px solid #ccc;padding:8px;text-align:center;'>
+                    <button title="Modifica" onclick="modificaUtente(${u.id}, '${u.nome}', '${u.cognome}', '${u.email}')" style="background:none;border:none;cursor:pointer;font-size:1.2em;">✏️</button>
+                    <button title="Elimina" onclick="eliminaUtente(${u.id})" style="background:none;border:none;cursor:pointer;font-size:1.2em;">🗑️</button>
+                  </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        window.onload = caricaUtenti;
+
+        // Funzione per eliminare un utente
+        async function eliminaUtente(id) {
+            if(confirm('Sei sicuro di voler eliminare questo utente?')) {
+                const res = await fetch(`/api/utenti/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if(data.success) {
+                    caricaUtenti();
+                } else {
+                    alert('Errore durante l\'eliminazione');
+                }
+            }
+        }
+
+        // Funzione per modificare un utente (riempie il form)
+        function modificaUtente(id, nome, cognome, email) {
+            document.getElementById('nome').value = nome;
+            document.getElementById('cognome').value = cognome;
+            document.getElementById('email').value = email;
+            document.getElementById('regForm').setAttribute('data-edit-id', id);
+            document.querySelector('.btn-login').textContent = 'Salva Modifiche';
+        }
+
+        // Submit unico: gestisce sia inserimento che modifica
+        document.getElementById('regForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const cognome = document.getElementById('cognome').value;
+            const email = document.getElementById('email').value;
+            const editId = this.getAttribute('data-edit-id');
+            let res, data;
+            if(editId) {
+                res = await fetch(`/api/utenti/${editId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, cognome, email })
+                });
+                data = await res.json();
+                if(data.success) {
+                    document.getElementById('msg').textContent = 'Utente modificato con successo!';
+                }
+                this.removeAttribute('data-edit-id');
+                document.querySelector('.btn-login').textContent = 'Registrati';
+            } else {
+                res = await fetch('/api/utenti', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, cognome, email })
+                });
+                data = await res.json();
+                if(data.success) {
+                    document.getElementById('msg').textContent = 'Registrazione avvenuta con successo!';
+                }
+            }
+            if(data.success) {
+                caricaUtenti();
+                this.reset();
+            } else {
+                document.getElementById('msg').textContent = data.error || 'Errore nella registrazione.';
+            }
+        });
+                // Funzione per eliminare un utente
+                async function eliminaUtente(id) {
+                    if(confirm('Sei sicuro di voler eliminare questo utente?')) {
+                        const res = await fetch(`/api/utenti/${id}`, { method: 'DELETE' });
+                        const data = await res.json();
+                        if(data.success) {
+                            caricaUtenti();
+                        } else {
+                            alert('Errore durante l\'eliminazione');
+                        }
+                    }
+                }
+
+                // Funzione per modificare un utente (riempie il form)
+                function modificaUtente(id, nome, cognome, email) {
+                    document.getElementById('nome').value = nome;
+                    document.getElementById('cognome').value = cognome;
+                    document.getElementById('email').value = email;
+                    document.getElementById('regForm').setAttribute('data-edit-id', id);
+                    document.querySelector('.btn-login').textContent = 'Salva Modifiche';
+                }
+
+                // Modifica submit per gestire update
+                document.getElementById('regForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const nome = document.getElementById('nome').value;
+                    const cognome = document.getElementById('cognome').value;
+                    const email = document.getElementById('email').value;
+                    const editId = this.getAttribute('data-edit-id');
+                    let res, data;
+                    if(editId) {
+                        res = await fetch(`/api/utenti/${editId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ nome, cognome, email })
+                        });
+                        data = await res.json();
+                        if(data.success) {
+                            document.getElementById('msg').textContent = 'Utente modificato con successo!';
+                        }
+                        this.removeAttribute('data-edit-id');
+                        document.querySelector('.btn-login').textContent = 'Registrati';
+                    } else {
+                        res = await fetch('/api/utenti', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ nome, cognome, email })
+                        });
+                        data = await res.json();
+                        if(data.success) {
+                            document.getElementById('msg').textContent = 'Registrazione avvenuta con successo!';
+                        }
+                    }
+                    if(data.success) {
+                        caricaUtenti();
+                        this.reset();
+                    } else {
+                        document.getElementById('msg').textContent = data.error || 'Errore nella registrazione.';
+                    }
+                });
+        </script>
     </main>
 </body>
 </html>
