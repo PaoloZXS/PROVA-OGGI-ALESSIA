@@ -7,6 +7,7 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
     caches.open('pwa-cache').then(function(cache) {
       return cache.match(event.request).then(function (response) {
