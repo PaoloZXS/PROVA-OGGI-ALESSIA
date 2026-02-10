@@ -1,4 +1,4 @@
-import { createClient } from '@libsql/client';
+const { createClient } = require('@libsql/client');
 
 const client = createClient({
   url: process.env.TURSO_URL,
@@ -6,7 +6,7 @@ const client = createClient({
   database: process.env.TURSO_DB || 'test',
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
     const result = await client.execute('SELECT * FROM utenti');
     res.status(200).json(result.rows);
@@ -20,4 +20,4 @@ export default async function handler(req, res) {
   } else {
     res.status(405).json({ error: 'Method not allowed' });
   }
-}
+};

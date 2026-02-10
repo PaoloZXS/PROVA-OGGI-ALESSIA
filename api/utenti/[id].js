@@ -1,4 +1,4 @@
-import { createClient } from '@libsql/client';
+const { createClient } = require('@libsql/client');
 
 const client = createClient({
   url: process.env.TURSO_URL,
@@ -6,7 +6,7 @@ const client = createClient({
   database: process.env.TURSO_DB || 'test',
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const { id } = req.query;
   if (req.method === 'DELETE') {
     await client.execute('DELETE FROM utenti WHERE id = ?', [id]);
@@ -21,4 +21,4 @@ export default async function handler(req, res) {
   } else {
     res.status(405).json({ error: 'Method not allowed' });
   }
-}
+};
