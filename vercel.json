@@ -1,5 +1,5 @@
 {
-  "buildCommand": "",
+  "buildCommand": "npm install",
   "outputDirectory": ".",
   "headers": [
     {
@@ -24,7 +24,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/index.js"
     },
     {
       "src": "/(.*)",
