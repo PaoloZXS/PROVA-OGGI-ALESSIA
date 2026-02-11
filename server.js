@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import { createClient } from '@libsql/client';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const client = createClient({
   url: 'libsql://test-paolozxs.aws-eu-west-1.turso.io',
