@@ -59,10 +59,36 @@
         <p>Scansiona il QR code qui sotto con il tuo smartphone per aprire la PWA e installarla.</p>
         <canvas id="qrcode"></canvas>
         <p style="margin-top:1.5rem; color:#888; font-size:0.95em;">Se richiesto, aggiungi la pagina alla schermata Home per installare la PWA.</p>
+        <button id="installBtn" style="display:none; margin-top:2rem; padding:0.75rem 2rem; background:#4CAF50; color:white; border:none; border-radius:4px; font-size:1rem; cursor:pointer; font-weight:bold;">📱 Installa App</button>
     </div>
     <script>
+      let deferredPrompt;
+
+      // Ascolta l'evento beforeinstallprompt
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBtn').style.display = 'block';
+      });
+
+      // Gestore click del pulsante di installazione
+      document.getElementById('installBtn').addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log(`Utente ha ${outcome === 'accepted' ? 'accettato' : 'rifiutato'} l'installazione`);
+          deferredPrompt = null;
+          document.getElementById('installBtn').style.display = 'none';
+        }
+      });
+
+      // Se l'app è già installata
+      window.addEventListener('appinstalled', () => {
+        console.log('✅ App installata con successo!');
+      });
+
       // Genera il QR code come immagine usando un servizio online
-      const pwaUrl = window.location.origin + '/index.html';
+      const pwaUrl = window.location.origin;
       const qrImg = document.createElement('img');
       qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(pwaUrl)}&size=220x220`;
       qrImg.alt = 'QR Code';
