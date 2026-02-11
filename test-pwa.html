@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PWA</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-box { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .ok { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .warning { color: orange; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Configurazione PWA</h1>
+    <div id="results"></div>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addTest(title, status, message) {
+            const div = document.createElement('div');
+            div.className = 'test-box';
+            div.innerHTML = `<h3>${title}</h3><p class="${status}">${status.toUpperCase()}: ${message}</p>`;
+            results.appendChild(div);
+        }
+
+        // Test 1: Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                if (registrations.length > 0) {
+                    addTest('Service Worker', 'ok', 'Service Worker registrato correttamente');
+                } else {
+                    addTest('Service Worker', 'error', 'Service Worker NON registrato');
+                }
+            });
+        } else {
+            addTest('Service Worker', 'error', 'Service Worker non supportato dal browser');
+        }
+
+        // Test 2: Manifest
+        fetch('/manifest.json')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Manifest non trovato');
+                }
+            })
+            .then(manifest => {
+                addTest('Manifest', 'ok', `Manifest caricato: ${manifest.name}`);
+                
+                // Verifica icone
+                if (manifest.icons && manifest.icons.length > 0) {
+                    addTest('Icone', 'ok', `${manifest.icons.length} icone trovate`);
+                } else {
+                    addTest('Icone', 'error', 'Nessuna icona nel manifest');
+                }
+
+                // Verifica display
+                if (manifest.display === 'standalone') {
+                    addTest('Display Mode', 'ok', 'Display mode: standalone');
+                } else {
+                    addTest('Display Mode', 'warning', `Display mode: ${manifest.display || 'non specificato'}`);
+                }
+
+                // Verifica start_url
+                if (manifest.start_url) {
+                    addTest('Start URL', 'ok', `Start URL: ${manifest.start_url}`);
+                } else {
+                    addTest('Start URL', 'error', 'Start URL non specificata');
+                }
+            })
+            .catch(error => {
+                addTest('Manifest', 'error', error.message);
+            });
+
+        // Test 3: Display Mode Attuale
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            addTest('Modalità Corrente', 'ok', 'App aperta in modalità STANDALONE (senza barra URL)');
+        } else {
+            addTest('Modalità Corrente', 'warning', 'App aperta nel BROWSER (con barra URL)');
+        }
+
+        // Test 4: HTTPS
+        if (location.protocol === 'https:') {
+            addTest('HTTPS', 'ok', 'Sito servito tramite HTTPS');
+        } else {
+            addTest('HTTPS', 'error', 'Sito NON servito tramite HTTPS (richiesto per PWA)');
+        }
+
+        // Test 5: beforeinstallprompt
+        let installPromptAvailable = false;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            installPromptAvailable = true;
+            addTest('Installazione', 'ok', 'Browser supporta l\'installazione PWA');
+        });
+
+        setTimeout(() => {
+            if (!installPromptAvailable) {
+                addTest('Installazione', 'warning', 'beforeinstallprompt non rilevato (potrebbe essere già installata o non installabile)');
+            }
+        }, 2000);
+
+    </script>
+</body>
+</html>
