@@ -14,6 +14,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina di Test</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+        }
+        
         nav {
             background-color: #333;
             padding: 1rem 0;
@@ -21,6 +32,7 @@
             top: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        
         nav ul {
             list-style: none;
             display: flex;
@@ -28,14 +40,119 @@
             gap: 2rem;
             padding: 0 2rem;
         }
+        
         nav a {
             color: white;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
+        
         nav a:hover {
             color: #4CAF50;
+        }
+        
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .login-container {
+            background-color: #f5f5f5;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            margin: 2rem auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-login:hover {
+            background-color: #0056b3;
+        }
+
+        #msg {
+            margin-top: 1.5rem;
+            text-align: center;
+            min-height: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        #msg.success {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        #msg.error {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
         }
     </style>
 </head>
@@ -48,8 +165,9 @@
             <li><a href="qrcode.html" id="qrcodeLink">QR Code</a></li>
         </ul>
     </nav>
-    <h1>Questa è la pagina di test</h1>
-    <p>Benvenuto nella pagina di test!</p>
+    <main>
+        <h1>Questa è la pagina di test</h1>
+        <p>Benvenuto nella pagina di test!</p>
     <script>
     // Nascondi il link QR Code se l'app è in modalità standalone (installata)
     if (window.matchMedia('(display-mode: standalone)').matches) {
