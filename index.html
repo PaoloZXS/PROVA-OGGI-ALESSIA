@@ -247,66 +247,6 @@
                 document.getElementById('msg').textContent = data.error || 'Errore nella registrazione.';
             }
         });
-                // Funzione per eliminare un utente
-                async function eliminaUtente(id) {
-                    if(confirm('Sei sicuro di voler eliminare questo utente?')) {
-                        const res = await fetch(`/api/utenti/${id}`, { method: 'DELETE' });
-                        const data = await res.json();
-                        if(data.success) {
-                            caricaUtenti();
-                        } else {
-                            alert('Errore durante l\'eliminazione');
-                        }
-                    }
-                }
-
-                // Funzione per modificare un utente (riempie il form)
-                function modificaUtente(id, nome, cognome, email) {
-                    document.getElementById('nome').value = nome;
-                    document.getElementById('cognome').value = cognome;
-                    document.getElementById('email').value = email;
-                    document.getElementById('regForm').setAttribute('data-edit-id', id);
-                    document.querySelector('.btn-login').textContent = 'Salva Modifiche';
-                }
-
-                // Modifica submit per gestire update
-                document.getElementById('regForm').addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    const nome = document.getElementById('nome').value;
-                    const cognome = document.getElementById('cognome').value;
-                    const email = document.getElementById('email').value;
-                    const editId = this.getAttribute('data-edit-id');
-                    let res, data;
-                    if(editId) {
-                        res = await fetch(`/api/utenti/${editId}`, {
-                            method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ nome, cognome, email })
-                        });
-                        data = await res.json();
-                        if(data.success) {
-                            document.getElementById('msg').textContent = 'Utente modificato con successo!';
-                        }
-                        this.removeAttribute('data-edit-id');
-                        document.querySelector('.btn-login').textContent = 'Registrati';
-                    } else {
-                        res = await fetch('/api/utenti', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ nome, cognome, email })
-                        });
-                        data = await res.json();
-                        if(data.success) {
-                            document.getElementById('msg').textContent = 'Registrazione avvenuta con successo!';
-                        }
-                    }
-                    if(data.success) {
-                        caricaUtenti();
-                        this.reset();
-                    } else {
-                        document.getElementById('msg').textContent = data.error || 'Errore nella registrazione.';
-                    }
-                });
         </script>
     </main>
 </body>
