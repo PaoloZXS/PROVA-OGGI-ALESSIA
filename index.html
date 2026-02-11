@@ -115,6 +115,48 @@
         .btn-login:hover {
             background-color: #0056b3;
         }
+
+        #msg {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: 500;
+            min-height: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        #msg.success {
+            color: white;
+            background-color: #4CAF50;
+        }
+
+        #msg.error {
+            color: white;
+            background-color: #f44336;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -147,7 +189,7 @@
                 </div>
                 <button type="submit" class="btn-login">Registrati</button>
             </form>
-            <div id="msg" style="margin-top:1rem;color:green;"></div>
+            <div id="msg"></div>
         </div>
         <div style="max-width:600px;margin:2rem auto;">
             <h2>Elenco Utenti Registrati</h2>
@@ -209,6 +251,24 @@
             document.querySelector('.btn-login').textContent = 'Salva Modifiche';
         }
 
+        // Funzione per mostrare il messaggio e farlo scomparire
+        function mostraMessaggio(testo, tipo = 'success', durata = 3000) {
+            const msg = document.getElementById('msg');
+            msg.textContent = testo;
+            msg.className = tipo;
+            msg.style.display = 'block';
+            
+            setTimeout(() => {
+                msg.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    msg.textContent = '';
+                    msg.className = '';
+                    msg.style.display = 'none';
+                    msg.style.animation = '';
+                }, 300);
+            }, durata);
+        }
+
         // Submit unico: gestisce sia inserimento che modifica
         document.getElementById('regForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -225,7 +285,7 @@
                 });
                 data = await res.json();
                 if(data.success) {
-                    document.getElementById('msg').textContent = 'Utente modificato con successo!';
+                    mostraMessaggio('Utente modificato con successo!', 'success');
                 }
                 this.removeAttribute('data-edit-id');
                 document.querySelector('.btn-login').textContent = 'Registrati';
@@ -237,14 +297,14 @@
                 });
                 data = await res.json();
                 if(data.success) {
-                    document.getElementById('msg').textContent = 'Registrazione avvenuta con successo!';
+                    mostraMessaggio('Registrazione avvenuta con successo!', 'success');
                 }
             }
             if(data.success) {
                 caricaUtenti();
                 this.reset();
             } else {
-                document.getElementById('msg').textContent = data.error || 'Errore nella registrazione.';
+                mostraMessaggio(data.error || 'Errore nella registrazione.', 'error');
             }
         });
         </script>
