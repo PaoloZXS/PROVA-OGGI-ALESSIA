@@ -5,6 +5,7 @@ const urlsToCache = [
   '/test.html',
   '/calendario.html',
   '/qrcode.html',
+  '/manifest.json',
   '/icon-192.png',
   '/icon-512.png'
 ];
