@@ -14,6 +14,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario</title>
     <style>
+        nav {
+            background-color: #333;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0 2rem;
+            margin: 0;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: #4CAF50;
+        }
+        
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
         .calendar { max-width: 400px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 24px; }
         .calendar h2 { text-align: center; margin-bottom: 20px; }
@@ -26,11 +54,11 @@
 </head>
 <body>
     <nav>
-        <ul style="background-color:#333;list-style:none;display:flex;justify-content:center;gap:2rem;padding:1rem 2rem;margin:0;">
-            <li><a href="index.html" style="color:white;text-decoration:none;font-weight:500;transition:color 0.3s ease;">Home</a></li>
-            <li><a href="test.html" style="color:white;text-decoration:none;font-weight:500;transition:color 0.3s ease;">Test</a></li>
-            <li><a href="calendario.html" style="color:white;text-decoration:none;font-weight:500;transition:color 0.3s ease;">Calendario</a></li>
-            <li><a href="qrcode.html" id="qrcodeLink" style="color:white;text-decoration:none;font-weight:500;transition:color 0.3s ease;">QR Code</a></li>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="test.html">Test</a></li>
+            <li><a href="calendario.html">Calendario</a></li>
+            <li><a href="qrcode.html" id="qrcodeLink">QR Code</a></li>
         </ul>
     </nav>
     <div class="calendar">
