@@ -1,7 +1,6 @@
-
-const express = require('express');
-const bodyParser = require('body-parser');
-const { createClient } = require('@libsql/client');
+import express from 'express';
+import bodyParser from 'body-parser';
+import { createClient } from '@libsql/client';
 
 const app = express();
 const port = 3000;
