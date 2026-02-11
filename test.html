@@ -23,10 +23,35 @@
             <li><a href="calendario.html">Calendario</a></li>
             <li><a href="qrcode.html" id="qrcodeLink">QR Code</a></li>
         </ul>
+        <button class="theme-toggle" id="themeToggle" title="Cambia tema">🌙</button>
     </nav>
     <main>
         <h1>Questa è la pagina di test</h1>
         <p>Benvenuto nella pagina di test!</p>
+    <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    
+    // Carica il tema salvato dal localStorage
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+        body.classList.add('dark-mode');
+        themeToggle.textContent = '☀️';
+    }
+    
+    // Cambia tema al click del pulsante
+    themeToggle.addEventListener('click', function() {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggle.textContent = '☀️';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggle.textContent = '🌙';
+        }
+    });
+    </script>
     <script>
     // Nascondi il link QR Code se l'app è in modalità standalone (installata)
     if (window.matchMedia('(display-mode: standalone)').matches) {
